@@ -18,15 +18,21 @@ out/
 
 # ---- 参考代码（不进入本项目，仅本地参考）----
 muduo/
-spdlog/
 test/
 main.cpp
 README.md
 
+# ---- spdlog 非构建必需目录（仅保留参与编译的源码）----
+spdlog/.github/
+spdlog/bench/
+spdlog/example/
+spdlog/logos/
+spdlog/scripts/
+spdlog/tests/
+
 # ---- 旧项目残留（本仓库将重写）----
 .clangd
 .stylua.toml
-CMakeLists.txt
 
 # ---- 临时/缓存 ----
 *.tmp
