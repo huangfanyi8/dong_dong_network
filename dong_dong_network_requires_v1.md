@@ -1,8 +1,8 @@
 # dong_dong_network_requires_v1 —— 项目需求文档（指挥官）
 
-> **本文件是项目唯一需求来源**：定义"要做什么"。
-> 协作方式与执行规范 → `AGENTS.md`；学习方法与验收 → `SKILL.md`。
-> 本文档按 v1 基线管理，目标完成后可在"扩展章节"记录二次开发需求，不打断当前目标链。
+> **本文件是项目唯一需求来源**：定义"要做什么"，供 agent 与学习者共同查阅。
+> 项目规则与协作流程 → `AGENTS.md`；学习方法与验收 → `.opencode/skills/dong-dong-learning/SKILL.md`。
+> 本文档按 v1 基线管理，目标完成后可在"扩展需求"章节记录二次开发方向，不打断当前目标链。
 
 ---
 
@@ -16,8 +16,7 @@
 | 参考物 | `muduo/` **不参与构建，仅作学习参考**，随时对照 |
 | 开发环境 | Windows（MSVC / CMake），代码保持双平台可移植 |
 
-**定位**：不是"抄 muduo"，而是"从裸 socket 重新发明一遍网络库"。
-每引入一个概念，都必须能回答：**它是为了解决哪个具体问题而生的？**
+**定位**：不是"抄 muduo"，而是"从裸 socket 重新发明一遍网络库"。每引入一个概念，都必须能回答：**它是为了解决哪个具体问题而生的？**
 
 ---
 
@@ -41,10 +40,7 @@
 | 13 | select 有上限、O(n) 扫描 | Linux 高性能服务器需求 | **epoll（Linux 后端）+ WSAEventSelect（Windows 后端）** | `step13/` |
 | 14 | 沉淀 | 把成果整理成**自己的跨平台库** | 命名/目录/接口打磨 | `step14_final/` |
 
-**内在逻辑（务必理解）**：
-- 目标 03 就选 select，因为它**跨平台**，从第一天就在写跨平台代码。
-- epoll 直到目标 13 才出现，作为"select 性能不够"的答案 —— 这样学 epoll 时天然理解"为什么要有 epoll"。
-- 也顺带看懂：**muduo 为什么只兼容 Linux**（它跳过 select，直接上 epoll + eventfd + timerfd，全是 Linux 专属）。
+**内在逻辑**：目标 03 选 select 因为它**跨平台**，从第一天就在写跨平台代码；epoll 直到目标 13 才出现，作为"select 性能不够"的答案——这样学 epoll 时天然理解"为什么要有 epoll"，也顺带看懂 muduo 为什么只兼容 Linux（跳过 select，直接上 epoll + eventfd + timerfd，全是 Linux 专属）。
 
 ---
 
@@ -52,18 +48,18 @@
 
 ```
 D:\C++\3partylib\muduo_cpp20\
-├── CMakeLists.txt              # 只 add_subdirectory(dong_dong)
-├── AGENTS.md                   # 协作规范（agent 执行）
-├── SKILL.md                    # 学习方法与验收
-├── dong_dong_network_requires_v1.md  # 本文件（指挥官）
-├── muduo\                      # 参考代码，不参与构建，不改动
-├── test\                       # 参考测试，不参与构建
-└── dong_dong\                  # ★ 本项目
-    ├── CMakeLists.txt          # 一个工程，多个可执行 target
-    ├── include\dong_dong\      # 对外头文件
-    │   └── Platform.h          # 跨平台 socket 包含 + WSAStartup 封装
-    └── source\                 # 实现与各目标的可运行程序
-        ├── step00\ ~ step14\   # 各阶段独立子目录（可独立编译运行）
+├── CMakeLists.txt                        # 只 add_subdirectory(dong_dong)
+├── AGENTS.md                             # opencode 项目规则（agent 自动加载）
+├── .opencode/skills/dong-dong-learning/  # 学习方法技能 SKILL.md（按需加载）
+├── dong_dong_network_requires_v1.md      # 本文件（指挥官/需求唯一来源）
+├── muduo\                                # 参考代码，不参与构建，不改动
+├── test\                                 # 参考测试，不参与构建
+└── dong_dong\                            # ★ 本项目
+    ├── CMakeLists.txt                    # 一个工程，多个可执行 target
+    ├── include\dong_dong\                # 对外头文件
+    │   └── Platform.h                    # 跨平台 socket 包含 + WSAStartup 封装
+    └── source\                           # 实现与各目标的可运行程序
+        ├── step00\ ~ step14\             # 各阶段独立子目录（可独立编译运行）
         └── ... 逐步演进
 ```
 
@@ -75,7 +71,7 @@ D:\C++\3partylib\muduo_cpp20\
 
 ## 4. 目标清单（一目标 = 一次提交 = 一个 PR）
 
-> 进度以 Git 提交 + GitHub PR 记录，仓库：`https://github.com/huangfanyi8/dong_dong_network.git`
+> 仓库：`https://github.com/huangfanyi8/dong_dong_network.git`
 > 流程：完成目标 → 本地验证 → 反问通过 → 提交（一次一个目标）→ 推远端 → 开 PR。
 > 每个目标包含：目标、动作、验证、反问清单。
 
@@ -241,7 +237,8 @@ D:\C++\3partylib\muduo_cpp20\
 
 > 每完成一个目标，在此追加一行（含 PR 链接），作为项目进度追踪。
 
-- [x] 目标 0（前置）：项目开发方案与仓库初始化 —— commit `dde0199`，PR 待补
+- [x] 目标 0（前置）：项目开发方案与仓库初始化 —— commit `dde0199`
+- [x] 目标 0（前置）：拆分协作文档为 requires v1 / SKILL / AGENTS —— commit `2280214`
 - [ ] 目标 1：项目骨架 + 认识参考代码
 - [ ] 目标 2 ~ 16：待完成
 
