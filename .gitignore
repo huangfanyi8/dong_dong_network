@@ -1,0 +1,36 @@
+# ---- 编译输出 ----
+build/
+out/
+*.obj
+*.o
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+
+# ---- IDE ----
+.idea/
+.vscode/
+*.suo
+*.user
+
+# ---- 参考代码（不进入本项目，仅本地参考）----
+muduo/
+spdlog/
+test/
+main.cpp
+README.md
+
+# ---- 旧项目残留（本仓库将重写）----
+.clangd
+.stylua.toml
+CMakeLists.txt
+
+# ---- 临时/缓存 ----
+*.tmp
+*.log
+.xmake/
+.cache/
+compile_commands.json
