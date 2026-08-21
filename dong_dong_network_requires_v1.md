@@ -90,8 +90,10 @@ cmake --build build
 **理解重点**：
 
 - 阻塞 socket 基本流程；
-- Windows socket 初始化；
+- Windows socket 初始化（WSAStartup）；
 - 为什么要从第一阶段就建立平台封装。
+
+> 认知预告（不设关卡）：muduo 参考代码里的 epoll/eventfd/timerfd 是 Linux 专属机制，属于目标 05/15 的学习内容，现在只需知道"它们存在"。
 
 ---
 
@@ -407,7 +409,9 @@ Linux 可以使用 `socketpair` 等机制；Windows 使用等价的本地 TCP �
 
 - [x] 前置：项目开发方案与仓库初始化 —— commit `dde0199`
 - [x] 前置：拆分协作文档为 requires / SKILL / AGENTS —— commit `2280214`
-- [ ] 目标 01：项目骨架 + 认识参考代码
+- [x] 前置：按 opencode 规范重构协作文档 —— commit `2911402`
+- [x] 前置：需求文档只保留学习路线与目标，spdlog 参与编译 —— commit `a39e566`
+- [x] 目标 01：项目骨架 + 认识参考代码
 - [ ] 目标 02：阻塞式单对单 echo
 - [ ] 目标 03：每连接一线程
 - [ ] 目标 04：非阻塞 + 轮询
