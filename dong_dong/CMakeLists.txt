@@ -16,3 +16,11 @@ target_link_libraries(dong_dong PUBLIC spdlog::spdlog)
 if(WIN32)
     target_link_libraries(dong_dong PUBLIC ws2_32)
 endif()
+
+# ---------- 目标02: 阻塞式单对单 echo ----------
+add_executable(step02_server source/step02/server.cpp)
+add_executable(step02_client source/step02/client.cpp)
+foreach(tgt step02_server step02_client)
+    target_include_directories(${tgt} PRIVATE include)
+    target_link_libraries(${tgt} PRIVATE dong_dong)
+endforeach()
