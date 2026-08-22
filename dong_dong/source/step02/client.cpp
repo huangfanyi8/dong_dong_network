@@ -2,11 +2,12 @@
 //
 // 流程: socket -> connect -> send 消息 -> recv 回显 -> close
 
+#include "dong_dong/Logging.h"
 #include "dong_dong/Platform.h"
 
 #include <cstdint>
-#include <cstdio>
 #include <cstring>
+#include <string>
 
 using dong_dong::SocketFd;
 
@@ -28,7 +29,7 @@ public:
         // 1. 创建 socket
         sockFd_ = ::socket(AF_INET, SOCK_STREAM, 0);
         if (!dong_dong::isValidSocket(sockFd_)) {
-            dong_dong::printError("socket()");
+            dong_dong::logSocketError("socket", dong_dong::Error::kSocketFailed);
             return false;
         }
 
@@ -41,10 +42,10 @@ public:
 
         // 3. connect：主动连接
         if (::connect(sockFd_, reinterpret_cast<struct sockaddr*>(&addr), sizeof(addr)) < 0) {
-            dong_dong::printError("connect()");
+            dong_dong::logSocketError("connect", dong_dong::Error::kConnectFailed);
             return false;
         }
-        std::printf("connected to server\n");
+        dong_dong::logInfo("connected to server");
         return true;
     }
 
@@ -52,18 +53,18 @@ public:
     void echo(const char* msg) {
         // 4. 发送
         ::send(sockFd_, msg, static_cast<int>(std::strlen(msg)), 0);
-        std::printf("sent: %s", msg);
+        dong_dong::logInfo(std::string("sent: ") + msg);
 
         // 5. 接收回显
         char buf[1024];
         int n = ::recv(sockFd_, buf, sizeof(buf) - 1, 0);
         if (n > 0) {
             buf[n] = '\0';
-            std::printf("echo: %s", buf);
+            dong_dong::logInfo(std::string("echo: ") + buf);
         } else if (n == 0) {
-            std::printf("server closed connection\n");
+            dong_dong::logInfo("server closed connection");
         } else {
-            dong_dong::printError("recv()");
+            dong_dong::logSocketError("recv", dong_dong::Error::kRecvFailed);
         }
     }
 
@@ -83,6 +84,7 @@ private:
 
 int main() {
     dong_dong::SocketInitializer init;
+    dong_dong::initLogger();
 
     EchoClient client;
     if (!client.connect("127.0.0.1", 8888)) {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cerrno>
-#include <cstdio>
 #include <cstring>
 
 #if defined(_WIN32)
@@ -81,12 +80,6 @@ inline const char* errorString(int err) {
 #else
     return ::strerror(err);
 #endif
-}
-
-// 打印错误信息：给出操作名 + 错误码 + 可读描述。
-inline void printError(const char* op) {
-    int err = lastError();
-    std::printf("%s failed, errno=%d: %s", op, err, errorString(err));
 }
 
 // 关闭 socket（跨平台）。

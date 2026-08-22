@@ -3,11 +3,12 @@
 // 流程: socket -> bind -> listen -> accept -> recv/send 循环回显 -> close
 // 平台差异统一由 dong_dong/Platform.h 处理（类型、错误码、close）。
 
+#include "dong_dong/Logging.h"
 #include "dong_dong/Platform.h"
 
 #include <cstdint>
-#include <cstdio>
 #include <cstring>
+#include <string>
 
 using dong_dong::SocketFd;
 
@@ -31,7 +32,7 @@ public:
         // 1. 创建监听 socket（TCP）
         listenFd_ = ::socket(AF_INET, SOCK_STREAM, 0);
         if (!dong_dong::isValidSocket(listenFd_)) {
-            dong_dong::printError("socket()");
+            dong_dong::logSocketError("socket", dong_dong::Error::kSocketFailed);
             return false;
         }
 
@@ -42,16 +43,16 @@ public:
         addr.sin_addr.s_addr = ::htonl(INADDR_ANY);
         addr.sin_port = ::htons(port_);
         if (::bind(listenFd_, reinterpret_cast<struct sockaddr*>(&addr), sizeof(addr)) < 0) {
-            dong_dong::printError("bind()");
+            dong_dong::logSocketError("bind", dong_dong::Error::kBindFailed);
             return false;
         }
 
         // 3. listen：进入监听状态
         if (::listen(listenFd_, 5) < 0) {
-            dong_dong::printError("listen()");
+            dong_dong::logSocketError("listen", dong_dong::Error::kListenFailed);
             return false;
         }
-        std::printf("server listening on %u...\n", port_);
+        dong_dong::logInfo("server listening on " + std::to_string(port_));
         return true;
     }
 
@@ -62,24 +63,24 @@ public:
         socklen_t len = sizeof(peer);
         connFd_ = ::accept(listenFd_, reinterpret_cast<struct sockaddr*>(&peer), &len);
         if (!dong_dong::isValidSocket(connFd_)) {
-            dong_dong::printError("accept()");
+            dong_dong::logSocketError("accept", dong_dong::Error::kAcceptFailed);
             return;
         }
-        std::printf("client connected\n");
+        dong_dong::logInfo("client connected");
 
         // 5. 回显循环
         char buf[1024];
         while (true) {
             int n = ::recv(connFd_, buf, sizeof(buf) - 1, 0);
             if (n == 0) {
-                std::printf("client closed connection\n");
+                dong_dong::logInfo("client closed connection");
                 break;
             } else if (n < 0) {
-                dong_dong::printError("recv()");
+                dong_dong::logSocketError("recv", dong_dong::Error::kRecvFailed);
                 break;
             }
             buf[n] = '\0';
-            std::printf("received: %s", buf);
+            dong_dong::logInfo(std::string("received: ") + buf);
             ::send(connFd_, buf, n, 0); // 原样回显
         }
     }
@@ -106,6 +107,7 @@ private:
 
 int main() {
     dong_dong::SocketInitializer init;
+    dong_dong::initLogger();
 
     EchoServer server(8888);
     if (!server.start()) {
