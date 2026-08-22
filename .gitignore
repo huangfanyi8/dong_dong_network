@@ -40,3 +40,7 @@ spdlog/tests/
 .xmake/
 .cache/
 compile_commands.json
+
+# ---- 日志运行时产物（目录进 git，内容不进）----
+log/*
+!log/.gitkeep
